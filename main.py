@@ -8,6 +8,15 @@ import re
 TOKEN = '7521576316:AAHiPNQVwbxtjm0khWdP-rQUPbzYCaoTGSg'
 INTRO_REGEX_PERSIAN = re.compile(r"#معرفی\s*(.+?)\s*\n+(.+)", re.IGNORECASE | re.DOTALL)
 
+def escape_markdown_v2(text):
+    """
+    Escapes special characters in the text to make it compatible with MarkdownV2 parse mode in Telegram.
+    """
+    # List of special characters that need to be escaped in MarkdownV2
+    special_chars = r'_*[]()~`>#+-=|{}.!'
+
+    # Use a regular expression to add a backslash before each special character
+    return re.sub(r'([{}])'.format(re.escape(special_chars)), r'\\\1', text)
 def extract_text_with_entities(message):
     entities = message.entities if message.entities else []
     raw_text = message.text
@@ -74,7 +83,7 @@ async def handle_message(update: Update, context: CallbackContext):
         full_name = match.group(1).strip()  # First line is the full name
         description = match.group(2).strip()  # Second line is the description
         full_name_escaped = re.escape(full_name)
-        description_escaped = re.escape(description)
+        description_escaped = escape_markdown_v2(description)
         if update.message.reply_to_message:
             replied_user = update.message.reply_to_message.from_user.username
 
@@ -83,6 +92,9 @@ async def handle_message(update: Update, context: CallbackContext):
                     await update.message.reply_text(f"آقا با این بات بازی نکنید :) به پیام خودتون ریپلای بزنید یا اصلا ریپلای نزنید")
                 elif update.message.from_user.username == 's_Ahmad_m_Awal':
                     add_user(replied_user, full_name_escaped, description_escaped)
+                    await update.message.reply_text(f"معرفی برای {replied_user} ذخیره شد!")
+                elif update.message.from_user.username == update.message.reply_to_message.from_user.username:
+                    add_user(replied_user, full_name_escaped, description_escaped);
                     await update.message.reply_text(f"معرفی برای {replied_user} ذخیره شد!")
                 else:
                     add_user(update.message.from_user.username, full_name_escaped, description_escaped)
@@ -109,8 +121,8 @@ async def handle_message(update: Update, context: CallbackContext):
             if user_info:
                 full_name, description = user_info
                 full_name_escaped = re.escape(full_name)
-                # description_escaped = re.escape(description)
-                await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description}", parse_mode='MarkdownV2')
+                description_escaped = escape_markdown_v2(description)
+                await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description_escaped}", parse_mode='MarkdownV2')
             else:
                 await update.message.reply_text(f"""متاسفانه معرفی ای برای ایشون ذخیره نشده است😞
 لطفا با استفاده از فرمت ذکر شده ایشون رو معرفی کنید
@@ -121,8 +133,8 @@ async def handle_message(update: Update, context: CallbackContext):
         if user_info:
             full_name, description = user_info
             full_name_escaped = re.escape(full_name)
-            # description_escaped = re.escape(description)
-            await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description}", parse_mode='MarkdownV2')
+            description_escaped = escape_markdown_v2(description)
+            await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description_escaped}", parse_mode='MarkdownV2')
 
         else:
             await update.message.reply_text(f"متاسفانه معرفی‌ای برای شما یافت نشد😞 لطفا خودتان را با فرمت ذکر شده معرفی کنید!")
