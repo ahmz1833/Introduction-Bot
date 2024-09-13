@@ -90,7 +90,7 @@ async def handle_message(update: Update, context: CallbackContext):
             if replied_user:
                 if replied_user == 'introduce_CEEE_bot':
                     await update.message.reply_text(f"آقا با این بات بازی نکنید :) به پیام خودتون ریپلای بزنید یا اصلا ریپلای نزنید")
-                elif update.message.from_user.username == 's_Ahmad_m_Awal':
+                elif update.message.from_user.username == 's_Ahmad_m_Awal' or update.message.from_user.username == 'ahmz1833':
                     add_user(replied_user, full_name_escaped, description_escaped)
                     await update.message.reply_text(f"معرفی برای {replied_user} ذخیره شد!")
                 elif update.message.from_user.username == update.message.reply_to_message.from_user.username:
@@ -98,8 +98,8 @@ async def handle_message(update: Update, context: CallbackContext):
                     await update.message.reply_text(f"معرفی برای {replied_user} ذخیره شد!")
                 else:
                     add_user(update.message.from_user.username, full_name_escaped, description_escaped)
-                    await update.message.reply_text(f"""با عرض پوزش با توجه به مطالبات سهیل🙂و دیگر کاربران فقط ادمین ربات میتونه معرفی دیگران رو تغییر بده به همین خاطر معرفی رو برای خودت ذخیره کردم!
-اگر میخواید که به افرادی که قابلیت ادیت کردن دارن اضافه شوید به ادمین ربات پیام بدید تا شما رو اضافه کنه با تشکر""")
+                    await update.message.reply_text(f"""با عرض پوزش با توجه به مطالبات کاربران فقط ادمین های ربات میتونن معرفی دیگران رو تغییر بدن ***به همین خاطر معرفی رو برای خودت ذخیره کردم😊***
+||اگر میخواید که به افرادی که قابلیت ادیت کردن دارن اضافه شوید به ادمین ربات پیام بدید تا شما رو اضافه کنه با تشکر||""", parse_mode='MarkdownV2')
             else:
                 await update.message.reply_text("کاربری که به آن پاسخ داده‌اید، نام کاربری ندارد.")
         else:
