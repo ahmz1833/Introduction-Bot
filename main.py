@@ -1,3 +1,4 @@
+#!./env/bin/python
 from telegram import Update, MessageEntity
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, CommandHandler, CallbackContext
 import asyncio
