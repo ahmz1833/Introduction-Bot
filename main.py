@@ -82,7 +82,7 @@ async def handle_message(update: Update, context: CallbackContext):
     if match:
         full_name = match.group(1).strip()  # First line is the full name
         description = match.group(2).strip()  # Second line is the description
-        full_name_escaped = re.escape(full_name)
+        full_name_escaped = escape_markdown_v2(full_name)
         description_escaped = escape_markdown_v2(description)
         if update.message.reply_to_message:
             replied_user = update.message.reply_to_message.from_user.username
@@ -120,7 +120,7 @@ async def handle_message(update: Update, context: CallbackContext):
 
             if user_info:
                 full_name, description = user_info
-                full_name_escaped = re.escape(full_name)
+                full_name_escaped = escape_markdown_v2(full_name)
                 description_escaped = escape_markdown_v2(description)
                 await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description_escaped}", parse_mode='MarkdownV2')
             else:
@@ -132,7 +132,7 @@ async def handle_message(update: Update, context: CallbackContext):
         user_info = get_user(username_user)
         if user_info:
             full_name, description = user_info
-            full_name_escaped = re.escape(full_name)
+            full_name_escaped = escape_markdown_v2(full_name)
             description_escaped = escape_markdown_v2(description)
             await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description_escaped}", parse_mode='MarkdownV2')
 
@@ -145,8 +145,9 @@ async def get_introduction(update: Update, context: CallbackContext):
 
     if user:
         full_name, description = user
-        full_name_escaped = re.escape(full_name)
-        await update.message.reply_text(f"معرفی شما:\nنام کامل: {full_name_escaped}\nتوضیحات: {description}", parse_mode='MarkdownV2')
+        full_name_escaped = escape_markdown_v2(full_name)
+        description_scaped = escape_markdown_v2(description)
+        await update.message.reply_text(f"معرفی شما:\nنام کامل: {full_name_escaped}\nتوضیحات: {description_scaped}", parse_mode='MarkdownV2')
     else:
         await update.message.reply_text("متاسفانه معرفی‌ای برای شما یافت نشد😞")
 
