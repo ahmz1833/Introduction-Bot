@@ -7,6 +7,7 @@ import re
 
 TOKEN = '7521576316:AAHiPNQVwbxtjm0khWdP-rQUPbzYCaoTGSg'
 INTRO_REGEX_PERSIAN = re.compile(r"#معرفی\s*(.+?)\s*\n+(.+)", re.IGNORECASE | re.DOTALL)
+AdminUsage = r"^#معرفی\s*\n@(\S+)\s*\n(.+?)\n\s*([\s\S]*)"
 
 def escape_markdown_v2(text):
     """
@@ -76,10 +77,18 @@ def get_user(username):
 # Handle user messages (Persian introduction)
 async def handle_message(update: Update, context: CallbackContext):
     message = update.message
+    matchAdmin = re.search(AdminUsage, message.text, re.MULTILINE)
+    # print(message.text)
     formatted_message = extract_text_with_entities(message)
     match = INTRO_REGEX_PERSIAN.match(formatted_message)
-
-    if match:
+    if matchAdmin:
+        if update.message.from_user.username == 's_Ahmad_m_Awal' or update.message.from_user.username == 'ahmz1833':
+            usernameAdminUse = matchAdmin.group(1)  # Extracting the username
+            nameAdminUse = matchAdmin.group(2).strip()  # Extracting the name and stripping any extra spaces
+            descriptionAdminUse = matchAdmin.group(3).strip()  # Extracting the description and stripping extra spaces
+            add_user(usernameAdminUse, nameAdminUse, descriptionAdminUse)
+            await update.message.reply_text(f"معرفی از طرف ادمین برای {usernameAdminUse} ذخیره شد!")
+    elif match:
         full_name = match.group(1).strip()  # First line is the full name
         description = match.group(2).strip()  # Second line is the description
         full_name_escaped = escape_markdown_v2(full_name)
@@ -124,9 +133,11 @@ async def handle_message(update: Update, context: CallbackContext):
                 description_escaped = escape_markdown_v2(description)
                 await update.message.reply_text(f"\\#معرفی\n{full_name_escaped}\n{description_escaped}", parse_mode='MarkdownV2')
             else:
-                await update.message.reply_text(f"""متاسفانه معرفی ای برای ایشون ذخیره نشده است😞
-لطفا با استفاده از فرمت ذکر شده ایشون رو معرفی کنید
-البته حتما روی یکی از پیام های ایشون ریپلای بزنید در غیر اینصورت معرفی برای خود شما ذخیره میشود!""")
+                await update.message.reply_text(f"""متاسفانه معرفی‌ای برای ایشون ثبت نشده‌است😔
+لطفا به ادمین‌های ربات:
+@ahmz1833
+@s_Ahmad_m_Awal
+ بگویید تا ایشون رو ثبت کنند یا خودش @{replied_user} خودش را معرفی کند.""")
     elif formatted_message == "(معرفی)":
         username_user = update.message.from_user.username
         user_info = get_user(username_user)
